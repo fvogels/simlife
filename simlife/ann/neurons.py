@@ -1,3 +1,11 @@
+class ConstantNeuron:
+    def __init__(self, constant):
+        self.__constant = constant
+
+    def determine_output(self):
+        return self.__constant
+
+
 class FrontSensor:
     def __init__(self, boid):
         self.__boid = boid
