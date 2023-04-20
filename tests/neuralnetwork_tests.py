@@ -82,6 +82,24 @@ def test_network_with_two_layers(constant1, constant2, threshold, weight1, weigh
         for w2 in [0.1, 0.4, 0.9]
         if c * w1 > t1 and w2 > t2
     ),
+    *(
+        (c, t1, t2, w1, w2, 0.0)
+        for c in [0.2, 0.3, 0.5, 1.0]
+        for t1 in [0.0, 0.1, 0.4]
+        for t2 in [0.0, 0.1, 0.4]
+        for w1 in [0.1, 0.4, 0.9]
+        for w2 in [0.1, 0.4, 0.9]
+        if c * w1 < t1 and w2 > t2
+    ),
+    *(
+        (c, t1, t2, w1, w2, 0.0)
+        for c in [0.2, 0.3, 0.5, 1.0]
+        for t1 in [0.0, 0.1, 0.4]
+        for t2 in [0.0, 0.1, 0.4]
+        for w1 in [0.1, 0.4, 0.9]
+        for w2 in [0.1, 0.4, 0.9]
+        if c * w1 > t1 and w2 < t2
+    ),
 ])
 def test_network_with_three_layers(constant, threshold1, threshold2, weight1, weight2, output):
     builder = NeuralNetworkBuilder()
