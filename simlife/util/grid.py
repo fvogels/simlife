@@ -21,7 +21,7 @@ class Grid:
         return len(self.__contents)
 
     def __getitem__(self, position):
-        assert self.is_valid_position(position)
+        assert self.is_valid_position(position), f'{position} is invalid'
         return self.__contents[position.y][position.x]
 
     def __setitem__(self, position, value):
