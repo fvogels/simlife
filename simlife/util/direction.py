@@ -22,8 +22,12 @@ class Direction:
         dy = self.dy + other.dy
         return Direction(dx, dy)
 
+    def __bool__(self):
+        return bool(self.dx) or bool(self.dy)
+
 
 NORTH = Direction(0, -1)
 EAST = Direction(1, 0)
 SOUTH = Direction(0, 1)
 WEST = Direction(-1, 0)
+CENTER = Direction(0, 0)
