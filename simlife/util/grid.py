@@ -1,10 +1,13 @@
+from .position import Position
+
+
 class Grid:
     def __init__(self, width, height, initializer):
         assert width > 0
         assert height > 0
         self.__contents = [
             [
-                initializer(x, y) for x in range(width)
+                initializer(Position(x, y)) for x in range(width)
             ]
             for y in range(height)
         ]
