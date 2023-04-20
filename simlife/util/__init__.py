@@ -1,3 +1,3 @@
-from .grid import Grid
-from .position import Position
-from .direction import Direction
+from .grid import *
+from .position import *
+from .direction import *
