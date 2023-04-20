@@ -23,7 +23,7 @@ class Grid:
 
     def __setitem__(self, position, value):
         assert self.is_valid_position(position)
-        return self.__contents[position.y][position.x] = value
+        self.__contents[position.y][position.x] = value
 
     def is_valid_position(self, position):
         return 0 <= position.x < self.width and 0 <= position.y < self.height
