@@ -17,6 +17,11 @@ class Direction:
     def __str__(self):
         return f'({self.x}, {self.y})'
 
+    def __add__(self, other):
+        dx = self.dx + other.dx
+        dy = self.dy + other.dy
+        return Direction(dx, dy)
+
 
 NORTH = Direction(0, -1)
 EAST = Direction(1, 0)
