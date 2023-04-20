@@ -16,3 +16,8 @@ class Position:
 
     def __str__(self):
         return f'({self.x}, {self.y})'
+
+    def __add__(self, direction):
+        x = self.x + direction.dx
+        y = self.y + direction.dy
+        return Position(x, y)
