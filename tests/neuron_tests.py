@@ -17,6 +17,6 @@ def test_constant(constant):
     (0.2, -0.1, 0.0),
 ])
 def test_rounding_neuron(threshold, input, output):
-    neuron = RoundingNeuron(0.1)
+    neuron = SignNeuron(0.1)
     neuron.feed_input(input)
     assert output == neuron.determine_output()

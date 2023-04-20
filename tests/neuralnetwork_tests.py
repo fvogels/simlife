@@ -29,13 +29,13 @@ from simlife.ann.neuralnetwork import *
 def test_network_with_single_link(constant, threshold, weight, output):
     builder = NeuralNetworkBuilder()
     constant = ConstantNeuron(constant)
-    rounder = RoundingNeuron(threshold)
-    builder.connect(constant, rounder, weight)
+    sign = SignNeuron(threshold)
+    builder.connect(constant, sign, weight)
     network = builder.build()
 
     network.update()
 
-    assert rounder.determine_output() == output
+    assert sign.determine_output() == output
 
 
 @pytest.mark.parametrize('constant1, constant2, threshold, weight1, weight2, output', [
@@ -62,14 +62,14 @@ def test_network_with_two_layers(constant1, constant2, threshold, weight1, weigh
     builder = NeuralNetworkBuilder()
     constant1 = ConstantNeuron(constant1)
     constant2 = ConstantNeuron(constant2)
-    rounder = RoundingNeuron(threshold)
-    builder.connect(constant1, rounder, weight1)
-    builder.connect(constant2, rounder, weight2)
+    sign = SignNeuron(threshold)
+    builder.connect(constant1, sign, weight1)
+    builder.connect(constant2, sign, weight2)
     network = builder.build()
 
     network.update()
 
-    assert rounder.determine_output() == output
+    assert sign.determine_output() == output
 
 
 @pytest.mark.parametrize('constant, threshold1, threshold2, weight1, weight2, output', [
@@ -104,12 +104,12 @@ def test_network_with_two_layers(constant1, constant2, threshold, weight1, weigh
 def test_network_with_three_layers(constant, threshold1, threshold2, weight1, weight2, output):
     builder = NeuralNetworkBuilder()
     constant = ConstantNeuron(constant)
-    rounder1 = RoundingNeuron(threshold1)
-    rounder2 = RoundingNeuron(threshold2)
-    builder.connect(constant, rounder1, weight1)
-    builder.connect(rounder1, rounder2, weight2)
+    sign1 = SignNeuron(threshold1)
+    sign2 = SignNeuron(threshold2)
+    builder.connect(constant, sign1, weight1)
+    builder.connect(sign1, sign2, weight2)
     network = builder.build()
 
     network.update()
 
-    assert rounder2.determine_output() == output
+    assert sign2.determine_output() == output

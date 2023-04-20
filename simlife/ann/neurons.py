@@ -17,7 +17,7 @@ class FrontSensor:
         return world[position_in_front_of_boid] is not None
 
 
-class RoundingNeuron:
+class SignNeuron:
     def __init__(self, threshold=0.1):
         self.__threshold = threshold
         self.__last_value = 0
