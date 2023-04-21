@@ -2,20 +2,20 @@ import random
 
 
 class DNA:
-    def __init__(self, values):
-        self.__values = values
+    def __init__(self, genes):
+        self.__genes = genes
 
     @staticmethod
     def create_random(length):
         return DNA([random.randint(-10, 10) / 10 for _ in range(length)])
 
     def __len__(self):
-        return len(self.__values)
+        return len(self.__genes)
 
     def __getitem__(self, key):
         index = key
-        if 0 <= index < len(self.__values):
-            return self.__values[index]
+        if 0 <= index < len(self.__genes):
+            return self.__genes[index]
         else:
             return 0
 
@@ -26,3 +26,7 @@ class DNA:
             *(other[i] for i in range(index, len(other)))
         ]
         return DNA(genes)
+
+    def __str__(self):
+        genes_string = ", ".join(map(str, self.__genes))
+        return f'DNA[{genes_string}]'

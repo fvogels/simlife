@@ -1,7 +1,7 @@
 import random
 from simlife.util import Grid, Position
 from simlife.util.orientation import *
-from simlife.simulation.boid import Boid
+from simlife.simulation.entities import Boid
 
 class World:
     def __init__(self, width, height):

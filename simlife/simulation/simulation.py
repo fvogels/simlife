@@ -12,7 +12,7 @@ class Simulation:
             decision = boid.decide_action()
             boid.orientation = boid.orientation.rotate(decision.rotation)
             if decision.movement_direction:
-                energy_consumed = decision.movement_direction.dx + decision.movement_direction.dy
+                energy_consumed = abs(decision.movement_direction.dx) + 2 * abs(decision.movement_direction.dy)
                 boid.energy -= energy_consumed
                 old_position = boid.position
                 new_position = old_position + decision.movement_direction.rotate(boid.orientation)

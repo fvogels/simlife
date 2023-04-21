@@ -1,3 +1,3 @@
 from .simulation import Simulation
-from .boid import Boid
+from .entities import Boid
 from .ai import ArtificialIntelligence
