@@ -13,8 +13,8 @@ class FrontSensor:
     def determine_output(self):
         boid = self.__boid
         world = boid.world
-        position_in_front_of_boid = boid.position + boid.direction
-        return world[position_in_front_of_boid] is not None
+        position_in_front_of_boid = boid.position + boid.orientation.to_direction()
+        return (not world.is_valid_position(position_in_front_of_boid)) or world[position_in_front_of_boid] is not None
 
 
 class SignNeuron:
