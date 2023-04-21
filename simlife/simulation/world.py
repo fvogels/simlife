@@ -33,8 +33,8 @@ class World:
         boid = Boid(self, position, orientation, dna)
         self.__grid[position] = boid
 
-    def add_entity(self, entity):
-        self[entity.position] = entity
+    def add_entity(self, position, entity):
+        self[position] = entity
 
     def move_entity(self, origin, destination):
         assert self.is_valid_position(origin)

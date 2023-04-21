@@ -36,3 +36,7 @@ class Boid:
 
     def decide_action(self):
         return self.__artificial_intelligence.decide_action()
+
+
+class Wall:
+    pass

@@ -1,3 +1,6 @@
+from simlife.simulation.entities import *
+
+
 class Simulation:
     def __init__(self, world):
         self.__world = world
@@ -7,7 +10,7 @@ class Simulation:
         return self.__world
 
     def compute_next(self):
-        boids = [cell for cell in self.__world if cell is not None]
+        boids = [cell for cell in self.__world if isinstance(cell, Boid)]
         for boid in boids:
             decision = boid.decide_action()
             boid.orientation = boid.orientation.rotate(decision.rotation)

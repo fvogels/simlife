@@ -2,7 +2,7 @@ import pygame
 import random
 import sys
 from simlife.simulation.world import World
-from simlife.simulation import Simulation
+from simlife.simulation import Simulation, Boid, Wall
 from simlife.util import *
 from simlife.simulation.dna import DNA
 
@@ -13,16 +13,19 @@ WINDOW_SIZE = (128 * CELL_SIZE, 128 * CELL_SIZE)
 
 BLACK = pygame.Color(0, 0, 0)
 WHITE = pygame.Color(255, 255, 255)
-
+RED = pygame.Color(255, 0, 0)
 
 class State:
     def __init__(self):
         self.__boid_count = 1000
         self.__simulation = self.__create_simulation(generate_dna=lambda: DNA.create_random(12))
         self.__runner = self.__runner_function()
+        self.__generation = 0
 
     def __create_simulation(self, *, generate_dna):
         world = World(128, 128)
+        for y in range(20, 108):
+            world.add_entity(Position(64, y), Wall())
         for _ in range(self.__boid_count):
             world.add_boid(dna=generate_dna())
         return Simulation(world)
@@ -39,15 +42,28 @@ class State:
 
     def __next_generation(self):
         def generate_dna():
-            dna1 = random.choice(dnas)
-            dna2 = random.choice(dnas)
+            dna1 = dnas[random_index()]
+            dna2 = dnas[random_index()]
             return dna1.crossover(dna2)
 
-        boids = (cell for cell in self.__simulation.world if cell is not None)
-        survivors = (boid for boid in boids if boid.position.x > 64 and boid.energy > -64)
+        def random_index():
+            x = random.random() ** 5
+            return int(x * len(dnas))
+
+        def metric(boid):
+            return boid.position.x
+            # return (boid.position.x, boid.energy)
+
+        boids = (cell for cell in self.__simulation.world if isinstance(cell, Boid))
+        survivors = sorted((boid for boid in boids if self.__survives(boid)), key=metric, reverse=True)
         dnas = [boid.dna for boid in survivors]
-        print(f'Survivors: {len(dnas)}')
+        print(f'Survivors in generation {self.__generation}: {len(dnas)}')
+        print(f'Winner: energy={survivors[0].energy} dna={survivors[0].dna}')
+        self.__generation += 1
         self.__simulation = self.__create_simulation(generate_dna=generate_dna)
+
+    def __survives(self, boid):
+        return boid.position.x > 64
 
     @property
     def world(self):
@@ -60,7 +76,9 @@ def render_world(surface, world):
             position = Position(x, y)
             cell = world[position]
             rectangle = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-            if cell:
+            if isinstance(cell, Boid):
+                color = RED
+            elif isinstance(cell, Wall):
                 color = BLACK
             else:
                 color = WHITE
