@@ -32,3 +32,23 @@ class SignNeuron:
             return -1.0
         else:
             return 0.0
+
+
+class ClassifierNeuron:
+    def __init__(self, negative_value, zero_value, positive_value, *, threshold=0.1):
+        self.__threshold = threshold
+        self.__negative_value = negative_value
+        self.__zero_value = zero_value
+        self.__positive_value = positive_value
+        self.__last_value = 0
+
+    def feed_input(self, value):
+        self.__last_value = value
+
+    def determine_output(self):
+        if self.__last_value > self.__threshold:
+            return self.__positive_value
+        elif self.__last_value < -self.__threshold:
+            return self.__negative_value
+        else:
+            return self.__zero_value
