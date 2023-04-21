@@ -1,9 +1,17 @@
+from simlife.simulation.ai import ArtificialIntelligence
+
+
 class Boid:
-    def __init__(self, world, position, orientation, artificial_intelligence_factory):
+    def __init__(self, world, position, orientation, dna):
         self.__orientation = orientation
         self.__world = world
         self.__position = position
-        self.__artificial_intelligence = artificial_intelligence_factory(self)
+        self.__dna = dna
+        self.__artificial_intelligence = ArtificialIntelligence(dna, self)
+
+    @property
+    def dna(self):
+        return self.__dna
 
     @property
     def world(self):
