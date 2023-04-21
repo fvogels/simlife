@@ -10,16 +10,20 @@ class ArtificialIntelligence:
             decision = Decision()
             decision.movement_direction += horizontal_movement_neuron.determine_output()
             decision.movement_direction += vertical_movement_neuron.determine_output()
+            decision.rotation = rotation_neuron.determine_output()
             return decision
 
         builder = NeuralNetworkBuilder()
         input_layer = [
             ConstantNeuron(1.0),
             FrontSensor(boid),
+            HorizontalSensor(boid),
+            VerticalSensor(boid),
         ]
         output_layer = [
             horizontal_movement_neuron := ClassifierNeuron(negative_value=WEST.to_direction(), zero_value=Direction(0, 0), positive_value=EAST.to_direction()),
-            vertical_movement_neuron := ClassifierNeuron(negative_value=NORTH.to_direction(), zero_value=Direction(0, 0), positive_value=SOUTH.to_direction())
+            vertical_movement_neuron := ClassifierNeuron(negative_value=NORTH.to_direction(), zero_value=Direction(0, 0), positive_value=SOUTH.to_direction()),
+            rotation_neuron := ClassifierNeuron(negative_value=WEST, zero_value=NORTH, positive_value=EAST),
         ]
 
         for index, (input_neuron, output_neuron) in enumerate((i, o) for i in input_layer for o in output_layer):
@@ -36,3 +40,4 @@ class ArtificialIntelligence:
 class Decision:
     def __init__(self):
         self.movement_direction = Direction(0, 0)
+        self.rotation = NORTH
