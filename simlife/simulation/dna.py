@@ -7,7 +7,7 @@ class DNA:
 
     @staticmethod
     def create_random(length):
-        return DNA([random.randint(-10, 10) / 10 for _ in range(length)])
+        return DNA([DNA.__random_weight() for _ in range(length)])
 
     def __len__(self):
         return len(self.__genes)
@@ -27,6 +27,16 @@ class DNA:
         ]
         return DNA(genes)
 
+    def mutate(self):
+        genes = self.__genes[:]
+        index = random.randrange(0, len(genes))
+        genes[index] = DNA.__random_weight()
+        return DNA(genes)
+
     def __str__(self):
         genes_string = ", ".join(map(str, self.__genes))
         return f'DNA[{genes_string}]'
+
+    @staticmethod
+    def __random_weight():
+        return random.randint(-10, 10) / 10

@@ -21,6 +21,7 @@ class State:
         self.__simulation = self.__create_simulation(generate_dna=lambda: DNA.create_random(12))
         self.__runner = self.__runner_function()
         self.__generation = 0
+        self.__mutation_rate = 10
 
     def __create_simulation(self, *, generate_dna):
         world = World(128, 128)
@@ -44,7 +45,10 @@ class State:
         def generate_dna():
             dna1 = dnas[random_index()]
             dna2 = dnas[random_index()]
-            return dna1.crossover(dna2)
+            dna = dna1.crossover(dna2)
+            if random.randrange(0, self.__mutation_rate) == 0:
+                dna = dna.mutate()
+            return dna
 
         def random_index():
             x = random.random() ** 5
