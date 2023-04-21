@@ -1,3 +1,6 @@
+from simlife.util.orientation import *
+
+
 class ConstantNeuron:
     def __init__(self, constant):
         self.__constant = constant
@@ -14,7 +17,36 @@ class FrontSensor:
         boid = self.__boid
         world = boid.world
         position_in_front_of_boid = boid.position + boid.orientation.to_direction()
-        return (not world.is_valid_position(position_in_front_of_boid)) or world[position_in_front_of_boid] is not None
+        if (not world.is_valid_position(position_in_front_of_boid)) or world[position_in_front_of_boid] is not None:
+            return 1
+        else:
+            return 0
+
+
+class HorizontalSensor:
+    def __init__(self, boid):
+        self.__boid = boid
+
+    def determine_output(self):
+        boid = self.__boid
+        if boid.orientation == EAST:
+            return 1.0
+        if boid.orientation == WEST:
+            return -1.0
+        return 0.0
+
+
+class VerticalSensor:
+    def __init__(self, boid):
+        self.__boid = boid
+
+    def determine_output(self):
+        boid = self.__boid
+        if boid.orientation == NORTH:
+            return -1.0
+        if boid.orientation == SOUTH:
+            return 1.0
+        return 0.0
 
 
 class SignNeuron:
