@@ -8,6 +8,7 @@ class Boid:
         self.__position = position
         self.__dna = dna
         self.__artificial_intelligence = ArtificialIntelligence(dna, self)
+        self.energy = 0
 
     @property
     def dna(self):

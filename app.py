@@ -18,7 +18,7 @@ WHITE = pygame.Color(255, 255, 255)
 class State:
     def __init__(self):
         self.__boid_count = 1000
-        self.__simulation = self.__create_simulation(generate_dna=lambda: DNA.create_random(4))
+        self.__simulation = self.__create_simulation(generate_dna=lambda: DNA.create_random(12))
         self.__runner = self.__runner_function()
 
     def __create_simulation(self, *, generate_dna):
@@ -44,7 +44,7 @@ class State:
             return dna1.crossover(dna2)
 
         boids = (cell for cell in self.__simulation.world if cell is not None)
-        survivors = (boid for boid in boids if boid.position.x > 64)
+        survivors = (boid for boid in boids if boid.position.x > 64 and boid.energy > -64)
         dnas = [boid.dna for boid in survivors]
         print(f'Survivors: {len(dnas)}')
         self.__simulation = self.__create_simulation(generate_dna=generate_dna)
@@ -93,4 +93,3 @@ while True:
         display_surface.fill((0,0,0))
         render_world(display_surface, state.world)
         pygame.display.flip()
-
