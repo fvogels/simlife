@@ -1,9 +1,9 @@
 class Boid:
-    def __init__(self, world, position, orientation, artificial_intelligence):
+    def __init__(self, world, position, orientation, artificial_intelligence_factory):
         self.__orientation = orientation
         self.__world = world
         self.__position = position
-        self.__artificial_intelligence = artificial_intelligence
+        self.__artificial_intelligence = artificial_intelligence_factory(self)
 
     @property
     def world(self):
