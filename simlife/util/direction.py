@@ -1,3 +1,6 @@
+from .orientation import *
+
+
 class Direction:
     def __init__(self, dx, dy):
         self.__dx = dx
@@ -12,10 +15,10 @@ class Direction:
         return self.__dy
 
     def __repr__(self):
-        return f'Direction({self.x}, {self.y})'
+        return f'Direction({self.dx}, {self.dy})'
 
     def __str__(self):
-        return f'({self.x}, {self.y})'
+        return f'({self.dx}, {self.dy})'
 
     def __add__(self, other):
         dx = self.dx + other.dx
@@ -25,9 +28,19 @@ class Direction:
     def __bool__(self):
         return bool(self.dx) or bool(self.dy)
 
+    def rotate(self, orientation):
+        if orientation is NORTH:
+            return self
+        if orientation is SOUTH:
+            return Direction(-self.dx, -self.dy)
+        if orientation is EAST:
+            return Direction(-self.dy, self.dx)
+        if orientation is WEST:
+            return Direction(self.dy, -self.dx)
+        raise RuntimeError('Invalid orientation')
 
-NORTH = Direction(0, -1)
-EAST = Direction(1, 0)
-SOUTH = Direction(0, 1)
-WEST = Direction(-1, 0)
-CENTER = Direction(0, 0)
+    def __eq__(self, other):
+        if isinstance(other, Direction):
+            return self.dx == other.dx and self.dy == other.dy
+        else:
+            return NotImplemented
