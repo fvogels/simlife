@@ -1,5 +1,7 @@
-from simlife.util import Grid, Position, Direction
-
+import random
+from simlife.util import Grid, Position
+from simlife.util.orientation import *
+from simlife.simulation.boid import Boid
 
 class World:
     def __init__(self, width, height):
@@ -25,6 +27,12 @@ class World:
     def __setitem__(self, position, value):
         self.__grid[position] = value
 
+    def add_boid(self, *, ai_factory, position=None, orientation=None):
+        position = position or self.__create_random_unsed_position()
+        orientation = orientation or self.__create_random_orientation()
+        boid = Boid(self, position, orientation, ai_factory)
+        self.__grid[position] = boid
+
     def add_entity(self, entity):
         self[entity.position] = entity
 
@@ -40,3 +48,19 @@ class World:
 
     def is_valid_position(self, position):
         return self.__grid.is_valid_position(position)
+
+    def __create_random_unsed_position(self):
+        while True:
+            x = random.randrange(0, self.width)
+            y = random.randrange(0, self.height)
+            position = Position(x, y)
+            if self[position] is None:
+                return position
+
+    def __create_random_orientation(self):
+        return random.choice([
+            NORTH,
+            EAST,
+            SOUTH,
+            WEST
+        ])
