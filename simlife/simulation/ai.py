@@ -33,9 +33,6 @@ class ArtificialIntelligence:
         return self.__decider()
 
 
-def ai_factory(dna):
-    return lambda boid: ArtificialIntelligence(dna, boid)
-
 class Decision:
     def __init__(self):
         self.movement_direction = Direction(0, 0)
