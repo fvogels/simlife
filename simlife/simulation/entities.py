@@ -2,12 +2,12 @@ from simlife.simulation.ai import ArtificialIntelligence
 
 
 class Boid:
-    def __init__(self, *, world, position, orientation, neural_network_template, dna):
+    def __init__(self, *, world, position, orientation, phenotype_builder, dna):
         self.__orientation = orientation
         self.__world = world
         self.__position = position
         self.__dna = dna
-        self.__artificial_intelligence = ArtificialIntelligence(neural_network_template=neural_network_template, dna=dna, boid=self)
+        self.__artificial_intelligence = phenotype_builder.build(boid=self, dna=dna)
         self.energy = 0
 
     @property

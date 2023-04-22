@@ -1,3 +1,4 @@
+from itertools import count
 import random
 
 
@@ -34,3 +35,9 @@ class DNA:
     @staticmethod
     def __random_weight():
         return random.randint(-100, 100) / 10
+
+    def __iter__(self):
+        for i in count():
+            if i >= len(self.__genes):
+                self.__genes.append(self.__random_weight())
+            yield self.__genes[i]

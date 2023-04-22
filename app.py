@@ -1,6 +1,9 @@
+from itertools import pairwise
 import pygame
 import random
 import sys
+from simlife.ann.neuralnetwork import NeuralNetworkBuilder
+from simlife.simulation.ai import ArtificialIntelligence
 from simlife.simulation.world import World
 from simlife.ann.neurons import *
 from simlife.simulation import Simulation, Boid, Wall
@@ -17,11 +20,48 @@ WHITE = pygame.Color(255, 255, 255)
 RED = pygame.Color(255, 0, 0)
 
 
+class PhenotypeBuilder:
+    def build(self, boid, dna):
+        input_layer = [
+            # ConstantNeuron(1.0),
+            FrontSensor(boid),
+            HorizontalOrientationSensor(boid),
+            VerticalOrientationSensor(boid),
+            LatitudeSensor(boid),
+            # LongitudeSensor(boid),
+        ]
+        intermediate_layer = [
+            TriangularNeuron(),
+            TriangularNeuron(),
+            SigmoidNeuron(),
+            SigmoidNeuron(),
+        ]
+        output_layer = [
+            HorizontalMovementDecisionNeuron(),
+            VerticalMovementDecisionNeuron(),
+            RotationDecisionNeuron(),
+        ]
+
+        layers = [input_layer, output_layer]
+        builder = NeuralNetworkBuilder()
+        genes = iter(dna)
+
+        for layer1, layer2 in pairwise(layers):
+            for neuron1 in layer1:
+                for neuron2 in layer2:
+                    builder.connect(neuron1, neuron2, next(genes))
+
+        neural_network = builder.build()
+        artificial_intelligence = ArtificialIntelligence(neural_network, output_layer)
+
+        return artificial_intelligence
+
+
 class State:
     def __init__(self, *, fitness_metric, survival_predicate):
         self.__fitness_metric = fitness_metric
         self.__survival_predicate = survival_predicate
-        self.__template = self.__create_neural_network_template()
+        self.__phenotype_builder = PhenotypeBuilder()
         self.__boid_count = 1000
         self.__simulation = self.__create_simulation(generate_dna=lambda: DNA())
         self.__runner = self.__create_automatic_runner(100)
@@ -34,37 +74,12 @@ class State:
     def set_automatic(self):
         self.__runner = self.__create_automatic_runner(100)
 
-    def __create_neural_network_template(self):
-        def create(boid):
-            input_layer = [
-                # ConstantNeuron(1.0),
-                FrontSensor(boid),
-                HorizontalOrientationSensor(boid),
-                VerticalOrientationSensor(boid),
-                LatitudeSensor(boid),
-                LongitudeSensor(boid),
-            ]
-            intermediate_layer = [
-                TriangularNeuron(),
-                TriangularNeuron(),
-                SigmoidNeuron(),
-                SigmoidNeuron(),
-            ]
-            output_layer = [
-                HorizontalMovementDecisionNeuron(),
-                VerticalMovementDecisionNeuron(),
-                RotationDecisionNeuron(),
-            ]
-            return (input_layer, intermediate_layer, output_layer)
-
-        return create
-
     def __create_simulation(self, *, generate_dna):
         world = World(128, 128)
         # for y in range(20, 108, 2):
         #     world.add_entity(Position(64, y), Wall())
         for _ in range(self.__boid_count):
-            world.add_boid(dna=generate_dna(), neural_network_template=self.__template)
+            world.add_boid(dna=generate_dna(), phenotype_builder=self.__phenotype_builder)
         return Simulation(world)
 
     def step(self):
@@ -137,9 +152,13 @@ clock = pygame.time.Clock()
 
 
 state = State(
-    fitness_metric=lambda boid: -boid.position.distance_to(Position(64, 64)),
-    survival_predicate=lambda boid: 64 - 8 < boid.position.x < 64 + 8 and 64 - 8 < boid.position.y < 64 + 8
+    fitness_metric=lambda boid: boid.position.x,
+    survival_predicate=lambda boid: boid.position.x > 100
 )
+# state = State(
+#     fitness_metric=lambda boid: -boid.position.distance_to(Position(64, 64)),
+#     survival_predicate=lambda boid: 64 - 8 < boid.position.x < 64 + 8 and 64 - 8 < boid.position.y < 64 + 8
+# )
 simulation_timer = Timer(0.001)
 visual_timer = Timer(0.02)
 
