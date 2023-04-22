@@ -1,6 +1,6 @@
+import math
 from simlife.util.direction import Direction
 from simlife.util.orientation import *
-
 
 class ConstantNeuron:
     def __init__(self, constant):
@@ -152,3 +152,14 @@ class RotationDecisionNeuron:
         def update_decision(decision):
             decision.rotation = self.__inner.determine_output()
         return update_decision
+
+
+class MemoryNeuron:
+    def __init__(self, value=0.0):
+        self.__value = value
+
+    def feed_input(self, value):
+        self.__value += value
+
+    def determine_output(self):
+        return math.tanh(self.__value)

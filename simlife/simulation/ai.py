@@ -15,13 +15,31 @@ class ArtificialIntelligence:
             LatitudeSensor(boid),
             LongitudeSensor(boid),
         ]
+        intermediate_layer = [
+            MemoryNeuron(),
+            MemoryNeuron(),
+            MemoryNeuron(),
+            MemoryNeuron(),
+        ]
         self.__output_layer = [
             HorizontalMovementDecisionNeuron(),
             VerticalMovementDecisionNeuron(),
             RotationDecisionNeuron(),
         ]
 
-        for index, (input_neuron, output_neuron) in enumerate((i, o) for i in input_layer for o in self.__output_layer):
+        connections = [
+            *(
+                (i, o)
+                for i in input_layer
+                for o in intermediate_layer
+            ),
+            *(
+                (i, o)
+                for i in intermediate_layer
+                for o in self.__output_layer
+            )
+        ]
+        for index, (input_neuron, output_neuron) in enumerate(connections):
             builder.connect(input_neuron, output_neuron, dna[index])
         self.__neural_network = builder.build()
 
