@@ -14,9 +14,9 @@ class ArtificialIntelligence:
             VerticalSensor(boid),
         ]
         self.__output_layer = [
-            horizontal_movement_neuron := HorizontalMovementDecisionNeuron(),
-            vertical_movement_neuron := VerticalMovementDecisionNeuron(),
-            rotation_neuron := RotationDecisionNeuron(),
+            HorizontalMovementDecisionNeuron(),
+            VerticalMovementDecisionNeuron(),
+            RotationDecisionNeuron(),
         ]
 
         for index, (input_neuron, output_neuron) in enumerate((i, o) for i in input_layer for o in self.__output_layer):
