@@ -23,10 +23,16 @@ class State:
         self.__survival_predicate = survival_predicate
         self.__template = self.__create_neural_network_template()
         self.__boid_count = 1000
-        self.__simulation = self.__create_simulation(generate_dna=lambda: DNA.create_random(18))
+        self.__simulation = self.__create_simulation(generate_dna=lambda: DNA())
         self.__runner = self.__create_automatic_runner(100)
         self.__generation = 0
         self.__mutation_rate = 10
+
+    def set_manual(self):
+        self.__runner = self.__create_manual_runner()
+
+    def set_automatic(self):
+        self.__runner = self.__create_automatic_runner(100)
 
     def __create_neural_network_template(self):
         def create(boid):
@@ -77,6 +83,8 @@ class State:
         def runner():
             while True:
                 self.__simulation.compute_next()
+                yield None
+
         return runner()
 
     def next_generation(self):
@@ -129,7 +137,7 @@ clock = pygame.time.Clock()
 
 
 state = State(
-    fitness_metric=lambda boid: boid.position.x,
+    fitness_metric=lambda boid: 2 * math.tanh(boid.position.x) + math.tanh(boid.energy),
     survival_predicate=lambda boid: boid.position.x > 64
 )
 simulation_timer = Timer(0.001)
@@ -144,7 +152,11 @@ while True:
             if event.key == pygame.K_SPACE:
                 state.next_generation()
             elif event.key == pygame.K_a:
-                state.automatic_mode()
+                print('Setting automatic mode')
+                state.set_automatic()
+            elif event.key == pygame.K_m:
+                print('Setting manual mode')
+                state.set_manual()
 
     elapsed_seconds = clock.tick(FRAMES_PER_SECOND) / 1000
     if simulation_timer.tick(elapsed_seconds):
