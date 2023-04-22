@@ -1,3 +1,4 @@
+from simlife.util.direction import Direction
 from simlife.util.orientation import *
 
 
@@ -84,3 +85,50 @@ class ClassifierNeuron:
             return self.__negative_value
         else:
             return self.__zero_value
+
+
+class HorizontalMovementDecisionNeuron:
+    def __init__(self):
+        self.__inner = ClassifierNeuron(
+            negative_value=WEST.to_direction(),
+            zero_value=Direction(0, 0),
+            positive_value=EAST.to_direction(),
+        )
+
+    def feed_input(self, value):
+        self.__inner.feed_input(value)
+
+    def determine_output(self):
+        def update_decision(decision):
+            decision.movement_direction += self.__inner.determine_output()
+        return update_decision
+
+
+class VerticalMovementDecisionNeuron:
+    def __init__(self):
+        self.__inner = ClassifierNeuron(
+            negative_value=NORTH.to_direction(),
+            zero_value=Direction(0, 0),
+            positive_value=SOUTH.to_direction(),
+        )
+
+    def feed_input(self, value):
+        self.__inner.feed_input(value)
+
+    def determine_output(self):
+        def update_decision(decision):
+            decision.movement_direction += self.__inner.determine_output()
+        return update_decision
+
+
+class RotationDecisionNeuron:
+    def __init__(self):
+        self.__inner = ClassifierNeuron(negative_value=WEST, zero_value=NORTH, positive_value=EAST)
+
+    def feed_input(self, value):
+        self.__inner.feed_input(value)
+
+    def determine_output(self):
+        def update_decision(decision):
+            decision.rotation = self.__inner.determine_output()
+        return update_decision
