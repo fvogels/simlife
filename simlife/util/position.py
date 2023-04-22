@@ -21,3 +21,8 @@ class Position:
         x = self.x + direction.dx
         y = self.y + direction.dy
         return Position(x, y)
+
+    def distance_to(self, other):
+        dx = self.x - other.x
+        dy = self.y - other.y
+        return (dx ** 2 + dy ** 2) ** 0.5

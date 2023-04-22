@@ -37,7 +37,7 @@ class State:
     def __create_neural_network_template(self):
         def create(boid):
             input_layer = [
-                ConstantNeuron(1.0),
+                # ConstantNeuron(1.0),
                 FrontSensor(boid),
                 HorizontalOrientationSensor(boid),
                 VerticalOrientationSensor(boid),
@@ -45,8 +45,8 @@ class State:
                 LongitudeSensor(boid),
             ]
             intermediate_layer = [
-                SigmoidNeuron(),
-                SigmoidNeuron(),
+                TriangularNeuron(),
+                TriangularNeuron(),
                 SigmoidNeuron(),
                 SigmoidNeuron(),
             ]
@@ -55,14 +55,14 @@ class State:
                 VerticalMovementDecisionNeuron(),
                 RotationDecisionNeuron(),
             ]
-            return (input_layer, output_layer)
+            return (input_layer, intermediate_layer, output_layer)
 
         return create
 
     def __create_simulation(self, *, generate_dna):
         world = World(128, 128)
-        for y in range(20, 108, 2):
-            world.add_entity(Position(64, y), Wall())
+        # for y in range(20, 108, 2):
+        #     world.add_entity(Position(64, y), Wall())
         for _ in range(self.__boid_count):
             world.add_boid(dna=generate_dna(), neural_network_template=self.__template)
         return Simulation(world)
@@ -137,8 +137,8 @@ clock = pygame.time.Clock()
 
 
 state = State(
-    fitness_metric=lambda boid: 2 * math.tanh(boid.position.x) + math.tanh(boid.energy),
-    survival_predicate=lambda boid: boid.position.x > 64
+    fitness_metric=lambda boid: -boid.position.distance_to(Position(64, 64)),
+    survival_predicate=lambda boid: 64 - 8 < boid.position.x < 64 + 8 and 64 - 8 < boid.position.y < 64 + 8
 )
 simulation_timer = Timer(0.001)
 visual_timer = Timer(0.02)

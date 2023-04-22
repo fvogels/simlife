@@ -171,3 +171,11 @@ class SigmoidNeuron:
 
     def determine_output(self):
         return math.tanh(self.__value)
+
+
+class TriangularNeuron:
+    def feed_input(self, value):
+        self.__value = value
+
+    def determine_output(self):
+        return 1 - abs(self.__value)
