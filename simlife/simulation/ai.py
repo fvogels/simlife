@@ -10,8 +10,8 @@ class ArtificialIntelligence:
         input_layer = [
             ConstantNeuron(1.0),
             FrontSensor(boid),
-            HorizontalSensor(boid),
-            VerticalSensor(boid),
+            HorizontalOrientationSensor(boid),
+            VerticalOrientationSensor(boid),
         ]
         self.__output_layer = [
             HorizontalMovementDecisionNeuron(),

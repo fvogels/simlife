@@ -24,7 +24,7 @@ class FrontSensor:
             return 0
 
 
-class HorizontalSensor:
+class HorizontalOrientationSensor:
     def __init__(self, boid):
         self.__boid = boid
 
@@ -37,7 +37,7 @@ class HorizontalSensor:
         return 0.0
 
 
-class VerticalSensor:
+class VerticalOrientationSensor:
     def __init__(self, boid):
         self.__boid = boid
 

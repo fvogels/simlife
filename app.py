@@ -15,9 +15,11 @@ BLACK = pygame.Color(0, 0, 0)
 WHITE = pygame.Color(255, 255, 255)
 RED = pygame.Color(255, 0, 0)
 
+
 class State:
-    def __init__(self, *, fitness_metric):
+    def __init__(self, *, fitness_metric, survival_predicate):
         self.__fitness_metric = fitness_metric
+        self.__survival_predicate = survival_predicate
         self.__boid_count = 1000
         self.__simulation = self.__create_simulation(generate_dna=lambda: DNA.create_random(12))
         self.__runner = self.__runner_function()
@@ -56,15 +58,12 @@ class State:
             return int(x * len(dnas))
 
         boids = (cell for cell in self.__simulation.world if isinstance(cell, Boid))
-        survivors = sorted((boid for boid in boids if self.__survives(boid)), key=self.__fitness_metric, reverse=True)
+        survivors = sorted((boid for boid in boids if self.__survival_predicate(boid)), key=self.__fitness_metric, reverse=True)
         dnas = [boid.dna for boid in survivors]
         print(f'Survivors in generation {self.__generation}: {len(dnas)}')
         print(f'Winner: energy={survivors[0].energy} dna={survivors[0].dna}')
         self.__generation += 1
         self.__simulation = self.__create_simulation(generate_dna=generate_dna)
-
-    def __survives(self, boid):
-        return boid.position.x > 64
 
     @property
     def world(self):
@@ -94,7 +93,10 @@ display_surface = pygame.display.set_mode(WINDOW_SIZE)
 clock = pygame.time.Clock()
 
 
-state = State(fitness_metric=lambda boid: boid.position.x)
+state = State(
+    fitness_metric=lambda boid: -abs(boid.position.y - 64),
+    survival_predicate=lambda boid: boid.position.x > 64
+)
 simulation_timer = Timer(0.001)
 visual_timer = Timer(0.02)
 
