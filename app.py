@@ -24,7 +24,7 @@ class State:
         self.__template = self.__create_neural_network_template()
         self.__boid_count = 1000
         self.__simulation = self.__create_simulation(generate_dna=lambda: DNA.create_random(18))
-        self.__runner = self.__runner_function()
+        self.__runner = self.__create_automatic_runner(100)
         self.__generation = 0
         self.__mutation_rate = 10
 
@@ -64,10 +64,20 @@ class State:
     def step(self):
         next(self.__runner)
 
-    def __runner_function(self):
-        while True:
-            self.__simulation.compute_next()
-            yield None
+    def __create_automatic_runner(self, steps_per_generation):
+        def runner():
+            while True:
+                for _ in range(steps_per_generation):
+                    self.__simulation.compute_next()
+                    yield None
+                self.next_generation()
+        return runner()
+
+    def __create_manual_runner(self):
+        def runner():
+            while True:
+                self.__simulation.compute_next()
+        return runner()
 
     def next_generation(self):
         def generate_dna():
@@ -133,6 +143,8 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 state.next_generation()
+            elif event.key == pygame.K_a:
+                state.automatic_mode()
 
     elapsed_seconds = clock.tick(FRAMES_PER_SECOND) / 1000
     if simulation_timer.tick(elapsed_seconds):
