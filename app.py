@@ -2,6 +2,7 @@ import pygame
 import random
 import sys
 from simlife.simulation.world import World
+from simlife.ann.neurons import *
 from simlife.simulation import Simulation, Boid, Wall
 from simlife.util import *
 from simlife.simulation.dna import DNA
@@ -20,18 +21,44 @@ class State:
     def __init__(self, *, fitness_metric, survival_predicate):
         self.__fitness_metric = fitness_metric
         self.__survival_predicate = survival_predicate
+        self.__template = self.__create_neural_network_template()
         self.__boid_count = 1000
-        self.__simulation = self.__create_simulation(generate_dna=lambda: DNA.create_random(36))
+        self.__simulation = self.__create_simulation(generate_dna=lambda: DNA.create_random(6 * 4 + 4 * 3))
         self.__runner = self.__runner_function()
         self.__generation = 0
         self.__mutation_rate = 10
+
+    def __create_neural_network_template(self):
+        def create(boid):
+            input_layer = [
+                ConstantNeuron(1.0),
+                FrontSensor(boid),
+                HorizontalOrientationSensor(boid),
+                VerticalOrientationSensor(boid),
+                LatitudeSensor(boid),
+                LongitudeSensor(boid),
+            ]
+            intermediate_layer = [
+                SigmoidNeuron(),
+                SigmoidNeuron(),
+                SigmoidNeuron(),
+                SigmoidNeuron(),
+            ]
+            output_layer = [
+                HorizontalMovementDecisionNeuron(),
+                VerticalMovementDecisionNeuron(),
+                RotationDecisionNeuron(),
+            ]
+            return (input_layer, intermediate_layer, output_layer)
+
+        return create
 
     def __create_simulation(self, *, generate_dna):
         world = World(128, 128)
         for y in range(20, 108, 2):
             world.add_entity(Position(64, y), Wall())
         for _ in range(self.__boid_count):
-            world.add_boid(dna=generate_dna())
+            world.add_boid(dna=generate_dna(), neural_network_template=self.__template)
         return Simulation(world)
 
     def step(self):

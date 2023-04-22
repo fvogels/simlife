@@ -27,10 +27,10 @@ class World:
     def __setitem__(self, position, value):
         self.__grid[position] = value
 
-    def add_boid(self, *, dna, position=None, orientation=None):
+    def add_boid(self, *, dna, neural_network_template, position=None, orientation=None):
         position = position or self.__create_random_unsed_position()
         orientation = orientation or self.__create_random_orientation()
-        boid = Boid(self, position, orientation, dna)
+        boid = Boid(world=self, position=position, orientation=orientation, dna=dna, neural_network_template=neural_network_template)
         self.__grid[position] = boid
 
     def add_entity(self, position, entity):

@@ -163,3 +163,11 @@ class MemoryNeuron:
 
     def determine_output(self):
         return math.tanh(self.__value)
+
+
+class SigmoidNeuron:
+    def feed_input(self, value):
+        self.__value = value
+
+    def determine_output(self):
+        return math.tanh(self.__value)
