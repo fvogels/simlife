@@ -23,7 +23,7 @@ class State:
         self.__survival_predicate = survival_predicate
         self.__template = self.__create_neural_network_template()
         self.__boid_count = 1000
-        self.__simulation = self.__create_simulation(generate_dna=lambda: DNA.create_random(6 * 4 + 4 * 3))
+        self.__simulation = self.__create_simulation(generate_dna=lambda: DNA.create_random(18))
         self.__runner = self.__runner_function()
         self.__generation = 0
         self.__mutation_rate = 10
@@ -49,7 +49,7 @@ class State:
                 VerticalMovementDecisionNeuron(),
                 RotationDecisionNeuron(),
             ]
-            return (input_layer, intermediate_layer, output_layer)
+            return (input_layer, output_layer)
 
         return create
 
@@ -66,12 +66,10 @@ class State:
 
     def __runner_function(self):
         while True:
-            for _ in range(100):
-                self.__simulation.compute_next()
-                yield None
-            self.__next_generation()
+            self.__simulation.compute_next()
+            yield None
 
-    def __next_generation(self):
+    def next_generation(self):
         def generate_dna():
             dna1 = dnas[random_index()]
             dna2 = dnas[random_index()]
@@ -132,6 +130,9 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit(0)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                state.next_generation()
 
     elapsed_seconds = clock.tick(FRAMES_PER_SECOND) / 1000
     if simulation_timer.tick(elapsed_seconds):
