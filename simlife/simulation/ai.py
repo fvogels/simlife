@@ -12,6 +12,8 @@ class ArtificialIntelligence:
             FrontSensor(boid),
             HorizontalOrientationSensor(boid),
             VerticalOrientationSensor(boid),
+            LatitudeSensor(boid),
+            LongitudeSensor(boid),
         ]
         self.__output_layer = [
             HorizontalMovementDecisionNeuron(),

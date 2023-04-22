@@ -21,7 +21,7 @@ class State:
         self.__fitness_metric = fitness_metric
         self.__survival_predicate = survival_predicate
         self.__boid_count = 1000
-        self.__simulation = self.__create_simulation(generate_dna=lambda: DNA.create_random(12))
+        self.__simulation = self.__create_simulation(generate_dna=lambda: DNA.create_random(18))
         self.__runner = self.__runner_function()
         self.__generation = 0
         self.__mutation_rate = 10
@@ -94,7 +94,7 @@ clock = pygame.time.Clock()
 
 
 state = State(
-    fitness_metric=lambda boid: -abs(boid.position.y - 64),
+    fitness_metric=lambda boid: boid.position.y,
     survival_predicate=lambda boid: boid.position.x > 64
 )
 simulation_timer = Timer(0.001)

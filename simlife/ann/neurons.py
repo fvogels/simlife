@@ -50,6 +50,26 @@ class VerticalOrientationSensor:
         return 0.0
 
 
+class LatitudeSensor:
+    def __init__(self, boid):
+        self.__boid = boid
+
+    def determine_output(self):
+        world = self.__boid.world
+        position = self.__boid.position
+        return (position.x - world.width / 2) / (world.width / 2)
+
+
+class LongitudeSensor:
+    def __init__(self, boid):
+        self.__boid = boid
+
+    def determine_output(self):
+        world = self.__boid.world
+        position = self.__boid.position
+        return (position.y - world.height / 2) / (world.height / 2)
+
+
 class SignNeuron:
     def __init__(self, threshold=0.1):
         self.__threshold = threshold
