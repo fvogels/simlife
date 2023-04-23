@@ -76,11 +76,11 @@ class PhenotypeBuilder:
 
 
 class State:
-    def __init__(self, *, fitness_metric, survival_predicate, mutation_rate, boid_initial_energy, auto_steps_per_generation=200):
+    def __init__(self, *, fitness_metric, survival_predicate, mutation_rate, boid_initial_energy, phenotype_builder, auto_steps_per_generation=200):
         self.__boid_count = 1000
         self.__fitness_metric = fitness_metric
         self.__survival_predicate = survival_predicate
-        self.__phenotype_builder = PhenotypeBuilder()
+        self.__phenotype_builder = phenotype_builder
         self.__generation = 0
         self.__mutation_rate = mutation_rate
         self.__boid_initial_energy = boid_initial_energy
@@ -193,6 +193,7 @@ clock = pygame.time.Clock()
 state = State(
     fitness_metric=lambda boid: boid.position.x,
     survival_predicate=lambda boid: boid.position.x >= 100,
+    phenotype_builder=PhenotypeBuilder(),
     mutation_rate=1,
     boid_initial_energy=200,
     auto_steps_per_generation=200,
