@@ -25,6 +25,20 @@ class FrontSensor:
             return 0
 
 
+class AroundSensor:
+    def __init__(self, boid):
+        self.__boid = boid
+
+    def determine_output(self):
+        boid = self.__boid
+        world = boid.world
+        for orientation in [NORTH, EAST, SOUTH, WEST]:
+            neighboring_position = boid.position + orientation.to_direction()
+            if (not world.is_valid_position(neighboring_position)) or world[neighboring_position] is not None:
+                return 1
+        return 0
+
+
 class HorizontalOrientationSensor:
     def __init__(self, boid):
         self.__boid = boid
@@ -97,8 +111,8 @@ class SignNeuron:
 
 
 class ClassifierNeuron:
-    def __init__(self, negative_value, zero_value, positive_value, *, threshold=0.33):
-        self.__threshold = threshold
+    def __init__(self, negative_value, zero_value, positive_value, *, threshold=None):
+        self.__threshold = threshold if threshold is not None else 0.333
         self.__negative_value = negative_value
         self.__zero_value = zero_value
         self.__positive_value = positive_value
@@ -117,11 +131,12 @@ class ClassifierNeuron:
 
 
 class HorizontalMovementDecisionNeuron:
-    def __init__(self, relative=True):
+    def __init__(self, relative=True, threshold=None):
         self.__inner = ClassifierNeuron(
             negative_value=WEST.to_direction(),
             zero_value=Direction(0, 0),
             positive_value=EAST.to_direction(),
+            threshold=threshold,
         )
         self.__decision_property = 'relative_motion'if relative else 'absolute_motion'
 
@@ -137,13 +152,14 @@ class HorizontalMovementDecisionNeuron:
 
 
 class VerticalMovementDecisionNeuron:
-    def __init__(self, relative=True):
+    def __init__(self, relative=True, threshold=None):
         self.__inner = ClassifierNeuron(
             negative_value=NORTH.to_direction(),
             zero_value=Direction(0, 0),
             positive_value=SOUTH.to_direction(),
+            threshold=threshold,
         )
-        self.__decision_property = 'relative_motion'if relative else 'absolute_motion'
+        self.__decision_property = 'relative_motion' if relative else 'absolute_motion'
 
     def feed_input(self, value):
         self.__inner.feed_input(value)
@@ -210,17 +226,19 @@ class TriangularNeuron:
 
 
 class StepNeuron:
-    def __init__(self, x):
+    def __init__(self, x, y1, y2):
         self.__x = x
+        self.__y1 = y1
+        self.__y2 = y2
 
     def feed_input(self, value):
         self.__value = value
 
     def determine_output(self):
         if self.__value <= self.__x:
-            return 0
+            return self.__y1
         else:
-            return 1
+            return self.__y2
 
 
 class IdentityNeuron:
