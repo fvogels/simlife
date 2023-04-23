@@ -8,7 +8,7 @@ class Boid:
         self.__position = position
         self.__dna = dna
         self.__artificial_intelligence = phenotype_builder.build(boid=self, dna=dna)
-        self.energy = 0
+        self.energy = 100
 
     @property
     def dna(self):

@@ -46,6 +46,9 @@ class World:
         self[destination] = entity
         entity.position = destination
 
+    def remove_entity(self, position):
+        self[position] = None
+
     def is_valid_position(self, position):
         return self.__grid.is_valid_position(position)
 
