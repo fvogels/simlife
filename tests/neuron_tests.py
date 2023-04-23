@@ -40,3 +40,15 @@ def test_horizontal_orientation_sensor(orientation, expected):
     boid = BoidStub(orientation=orientation)
     neuron = HorizontalOrientationSensor(boid)
     assert neuron.determine_output() == expected
+
+
+@pytest.mark.parametrize('orientation, expected', [
+    (NORTH, -1.0),
+    (SOUTH, 1.0),
+    (EAST, 0.0),
+    (WEST, 0.0),
+])
+def test_vertical_orientation_sensor(orientation, expected):
+    boid = BoidStub(orientation=orientation)
+    neuron = VerticalOrientationSensor(boid)
+    assert neuron.determine_output() == expected
