@@ -34,21 +34,21 @@ class PhenotypeBuilder:
                 LongitudeSensor(boid),
                 # EnergySensor(boid),
             ],
-            [
-                StepNeuron(next(genes)),
-                StepNeuron(next(genes)),
-                StepNeuron(next(genes)),
-            ],
-            [
-                StepNeuron(next(genes)),
-                StepNeuron(next(genes)),
-                StepNeuron(next(genes)),
-            ],
-            [
-                StepNeuron(next(genes)),
-                StepNeuron(next(genes)),
-                StepNeuron(next(genes)),
-            ],
+            # [
+            #     StepNeuron(next(genes)),
+            #     StepNeuron(next(genes)),
+            #     StepNeuron(next(genes)),
+            # ],
+            # [
+            #     StepNeuron(next(genes)),
+            #     StepNeuron(next(genes)),
+            #     StepNeuron(next(genes)),
+            # ],
+            # [
+            #     StepNeuron(next(genes)),
+            #     StepNeuron(next(genes)),
+            #     StepNeuron(next(genes)),
+            # ],
             [
                 HorizontalMovementDecisionNeuron(relative=False),
                 VerticalMovementDecisionNeuron(relative=False),
@@ -99,6 +99,7 @@ class State:
     def __create_simulation(self):
         rules = [
             AbsoluteMotionRule(),
+            DeathRule(),
         ]
 
         return Simulation(rules)
