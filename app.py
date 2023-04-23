@@ -86,7 +86,7 @@ class PhenotypeBuilder:
 
 
 class State:
-    def __init__(self, *, fitness_metric, survival_predicate, mutation_rate, boid_initial_energy, phenotype_builder, auto_steps_per_generation=200):
+    def __init__(self, *, fitness_metric, survival_predicate, mutation_rate, boid_initial_energy, phenotype_builder, simulation_rules, auto_steps_per_generation=200):
         self.__boid_count = 1000
         self.__fitness_metric = fitness_metric
         self.__survival_predicate = survival_predicate
@@ -94,7 +94,7 @@ class State:
         self.__generation = 0
         self.__mutation_rate = mutation_rate
         self.__boid_initial_energy = boid_initial_energy
-        self.__simulation = self.__create_simulation()
+        self.__simulation = Simulation(simulation_rules)
         self.__auto_steps_per_generation = auto_steps_per_generation
 
         self.__world = self.__create_world(generate_dna=lambda: DNA())
@@ -113,14 +113,6 @@ class State:
 
     def set_automatic(self):
         self.__runner = self.__create_automatic_runner(self.__auto_steps_per_generation)
-
-    def __create_simulation(self):
-        rules = [
-            AbsoluteMotionRule(),
-            DeathRule(),
-        ]
-
-        return Simulation(rules)
 
     def step(self):
         next(self.__runner)
@@ -207,6 +199,10 @@ state = State(
     mutation_rate=1,
     boid_initial_energy=200,
     auto_steps_per_generation=100,
+    simulation_rules=[
+        AbsoluteMotionRule(),
+        DeathRule(),
+    ],
 )
 
 simulation_timer = Timer(0.02)
