@@ -22,27 +22,29 @@ RED = pygame.Color(255, 0, 0)
 
 class PhenotypeBuilder:
     def build(self, boid, dna):
-        input_layer = [
-            # ConstantNeuron(1.0),
-            FrontSensor(boid),
-            HorizontalOrientationSensor(boid),
-            VerticalOrientationSensor(boid),
-            LatitudeSensor(boid),
-            # LongitudeSensor(boid),
+        layers = [
+            [
+                ConstantNeuron(1.0),
+                FrontSensor(boid),
+                HorizontalOrientationSensor(boid),
+                VerticalOrientationSensor(boid),
+                LatitudeSensor(boid),
+                LongitudeSensor(boid),
+            ],
+            [
+                TriangularNeuron(),
+                TriangularNeuron(),
+                TriangularNeuron(),
+                SigmoidNeuron(),
+                SigmoidNeuron(),
+                SigmoidNeuron(),
+            ],
+            [
+                HorizontalMovementDecisionNeuron(),
+                VerticalMovementDecisionNeuron(),
+                RotationDecisionNeuron(),
+            ]
         ]
-        intermediate_layer = [
-            TriangularNeuron(),
-            TriangularNeuron(),
-            SigmoidNeuron(),
-            SigmoidNeuron(),
-        ]
-        output_layer = [
-            HorizontalMovementDecisionNeuron(),
-            VerticalMovementDecisionNeuron(),
-            RotationDecisionNeuron(),
-        ]
-
-        layers = [input_layer, output_layer]
         builder = NeuralNetworkBuilder()
         genes = iter(dna)
 
@@ -52,7 +54,7 @@ class PhenotypeBuilder:
                     builder.connect(neuron1, neuron2, next(genes))
 
         neural_network = builder.build()
-        artificial_intelligence = ArtificialIntelligence(neural_network, output_layer)
+        artificial_intelligence = ArtificialIntelligence(neural_network, layers[-1])
 
         return artificial_intelligence
 
@@ -152,8 +154,8 @@ clock = pygame.time.Clock()
 
 
 state = State(
-    fitness_metric=lambda boid: boid.position.x,
-    survival_predicate=lambda boid: boid.position.x > 100
+    fitness_metric=lambda boid: max(boid.position.x, 127-boid.position.x),
+    survival_predicate=lambda boid: boid.position.x > 117 or boid.position.x < 10
 )
 # state = State(
 #     fitness_metric=lambda boid: -boid.position.distance_to(Position(64, 64)),

@@ -34,7 +34,7 @@ class DNA:
 
     @staticmethod
     def __random_weight():
-        return random.randint(-100, 100) / 10
+        return random.randint(-100, 100) / 100
 
     def __iter__(self):
         for i in count():

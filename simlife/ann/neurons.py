@@ -2,6 +2,7 @@ import math
 from simlife.util.direction import Direction
 from simlife.util.orientation import *
 
+
 class ConstantNeuron:
     def __init__(self, constant):
         self.__constant = constant
@@ -57,7 +58,7 @@ class LatitudeSensor:
     def determine_output(self):
         world = self.__boid.world
         position = self.__boid.position
-        return (position.x - world.width / 2) / (world.width / 2)
+        return position.x / (world.width - 1) * 2 - 1
 
 
 class LongitudeSensor:
@@ -67,7 +68,7 @@ class LongitudeSensor:
     def determine_output(self):
         world = self.__boid.world
         position = self.__boid.position
-        return (position.y - world.height / 2) / (world.height / 2)
+        return position.y / (world.height - 1) * 2 - 1
 
 
 class SignNeuron:
@@ -88,7 +89,7 @@ class SignNeuron:
 
 
 class ClassifierNeuron:
-    def __init__(self, negative_value, zero_value, positive_value, *, threshold=0.1):
+    def __init__(self, negative_value, zero_value, positive_value, *, threshold=0.33):
         self.__threshold = threshold
         self.__negative_value = negative_value
         self.__zero_value = zero_value

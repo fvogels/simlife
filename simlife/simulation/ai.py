@@ -1,4 +1,3 @@
-from itertools import pairwise
 from simlife.ann.neuralnetwork import *
 from simlife.ann.neurons import *
 from simlife.util.direction import *
