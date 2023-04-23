@@ -31,14 +31,20 @@ class PhenotypeBuilder:
                 # HorizontalOrientationSensor(boid),
                 # VerticalOrientationSensor(boid),
                 LatitudeSensor(boid),
-                LongitudeSensor(boid),
-                # EnergySensor(boid),
+                # LongitudeSensor(boid),
+                EnergySensor(boid),
             ],
-            # [
-            #     StepNeuron(next(genes)),
-            #     StepNeuron(next(genes)),
-            #     StepNeuron(next(genes)),
-            # ],
+            [
+                IdentityNeuron(),
+                IdentityNeuron(),
+                IdentityNeuron(),
+                StepNeuron(next(genes)),
+                StepNeuron(next(genes)),
+                StepNeuron(next(genes)),
+                SigmoidNeuron(),
+                SigmoidNeuron(),
+                SigmoidNeuron(),
+            ],
             # [
             #     StepNeuron(next(genes)),
             #     StepNeuron(next(genes)),
@@ -70,31 +76,33 @@ class PhenotypeBuilder:
 
 
 class State:
-    def __init__(self, *, fitness_metric, survival_predicate):
+    def __init__(self, *, fitness_metric, survival_predicate, mutation_rate, boid_initial_energy, auto_steps_per_generation=200):
         self.__boid_count = 1000
         self.__fitness_metric = fitness_metric
         self.__survival_predicate = survival_predicate
         self.__phenotype_builder = PhenotypeBuilder()
         self.__generation = 0
-        self.__mutation_rate = 10
+        self.__mutation_rate = mutation_rate
+        self.__boid_initial_energy = boid_initial_energy
         self.__simulation = self.__create_simulation()
+        self.__auto_steps_per_generation = auto_steps_per_generation
 
         self.__world = self.__create_world(generate_dna=lambda: DNA())
-        self.__runner = self.__create_automatic_runner(100)
+        self.set_automatic()
 
     def __create_world(self, generate_dna):
         world = World(128, 128)
         for y in range(20, 108, 2):
             world.add_entity(Position(64, y), Wall())
         for _ in range(self.__boid_count):
-            world.add_boid(dna=generate_dna(), phenotype_builder=self.__phenotype_builder)
+            world.add_boid(dna=generate_dna(), phenotype_builder=self.__phenotype_builder, energy=self.__boid_initial_energy)
         return world
 
     def set_manual(self):
         self.__runner = self.__create_manual_runner()
 
     def set_automatic(self):
-        self.__runner = self.__create_automatic_runner(100)
+        self.__runner = self.__create_automatic_runner(self.__auto_steps_per_generation)
 
     def __create_simulation(self):
         rules = [
@@ -184,7 +192,10 @@ clock = pygame.time.Clock()
 
 state = State(
     fitness_metric=lambda boid: boid.position.x,
-    survival_predicate=lambda boid: boid.position.x >= 100
+    survival_predicate=lambda boid: boid.position.x >= 100,
+    mutation_rate=1,
+    boid_initial_energy=200,
+    auto_steps_per_generation=200,
 )
 
 simulation_timer = Timer(0.02)

@@ -27,10 +27,10 @@ class World:
     def __setitem__(self, position, value):
         self.__grid[position] = value
 
-    def add_boid(self, *, dna, phenotype_builder, position=None, orientation=None):
+    def add_boid(self, *, dna, phenotype_builder, position=None, orientation=None, energy=None):
         position = position or self.__create_random_unsed_position()
         orientation = orientation or self.__create_random_orientation()
-        boid = Boid(world=self, position=position, orientation=orientation, dna=dna, phenotype_builder=phenotype_builder)
+        boid = Boid(world=self, position=position, orientation=orientation, dna=dna, phenotype_builder=phenotype_builder, energy=energy)
         self.__grid[position] = boid
 
     def add_entity(self, position, entity):

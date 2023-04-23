@@ -30,10 +30,6 @@ class Simulation:
                     winner.energy += 10
                     loser.energy -= 20
 
-    def __process_death(self, boid):
-        if boid.energy == 0:
-            self.__world.remove_entity(boid.position)
-
 
 class TimeDepletesEnergyRule:
     def apply(self, boid, decision):
