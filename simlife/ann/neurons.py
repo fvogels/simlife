@@ -221,3 +221,11 @@ class StepNeuron:
             return 0
         else:
             return 1
+
+
+class IdentityNeuron:
+    def feed_input(self, value):
+        self.__value = value
+
+    def determine_output(self):
+        return self.__value
