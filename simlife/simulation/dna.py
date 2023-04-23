@@ -15,6 +15,9 @@ class DNA:
         return self.__genes[index]
 
     def crossover(self, other):
+        if len(self) == 0:
+            return self
+
         index = random.randrange(0, len(self))
         genes = [
             *(self[i] for i in range(index)),
@@ -23,10 +26,13 @@ class DNA:
         return DNA(genes)
 
     def mutate(self):
-        genes = self.__genes[:]
-        index = random.randrange(0, len(genes))
-        genes[index] = DNA.__random_weight()
-        return DNA(genes)
+        if self.__genes:
+            genes = self.__genes[:]
+            index = random.randrange(0, len(genes))
+            genes[index] = DNA.__random_weight()
+            return DNA(genes)
+        else:
+            return self
 
     def __str__(self):
         genes_string = ", ".join(map(str, self.__genes))
