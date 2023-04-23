@@ -12,13 +12,13 @@ class Simulation:
     def compute_next(self):
         boids = [cell for cell in self.__world if isinstance(cell, Boid)]
         for boid in boids:
-            boid.energy -= 1
+            # boid.energy -= 1
             decision = boid.decide_action()
             self.__process_rotation(boid, decision)
             self.__process_relative_movement(boid, decision)
             self.__process_absolute_movement(boid, decision)
             # self.__process_fight(boid, decision)
-            # self.__process_death(boid)
+            self.__process_death(boid)
 
     def __process_rotation(self, boid, decision):
         if boid.energy > 0:

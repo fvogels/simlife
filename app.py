@@ -22,6 +22,8 @@ RED = pygame.Color(255, 0, 0)
 
 class PhenotypeBuilder:
     def build(self, boid, dna):
+        genes = iter(dna)
+
         layers = [
             [
                 ConstantNeuron(1.0),
@@ -32,14 +34,21 @@ class PhenotypeBuilder:
                 LongitudeSensor(boid),
                 # EnergySensor(boid),
             ],
-            # [
-            #     TriangularNeuron(),
-            #     TriangularNeuron(),
-            #     TriangularNeuron(),
-            #     SigmoidNeuron(),
-            #     SigmoidNeuron(),
-            #     SigmoidNeuron(),
-            # ],
+            [
+                StepNeuron(next(genes)),
+                StepNeuron(next(genes)),
+                StepNeuron(next(genes)),
+            ],
+            [
+                StepNeuron(next(genes)),
+                StepNeuron(next(genes)),
+                StepNeuron(next(genes)),
+            ],
+            [
+                StepNeuron(next(genes)),
+                StepNeuron(next(genes)),
+                StepNeuron(next(genes)),
+            ],
             [
                 HorizontalMovementDecisionNeuron(relative=False),
                 VerticalMovementDecisionNeuron(relative=False),
@@ -48,7 +57,6 @@ class PhenotypeBuilder:
             ]
         ]
         builder = NeuralNetworkBuilder()
-        genes = iter(dna)
 
         for layer1, layer2 in pairwise(layers):
             for neuron1 in layer1:
@@ -80,8 +88,8 @@ class State:
 
     def __create_simulation(self, *, generate_dna):
         world = World(128, 128)
-        for y in range(20, 108, 2):
-            world.add_entity(Position(64, y), Wall())
+        # for y in range(20, 108, 2):
+        #     world.add_entity(Position(64, y), Wall())
         for _ in range(self.__boid_count):
             world.add_boid(dna=generate_dna(), phenotype_builder=self.__phenotype_builder)
         return Simulation(world)
@@ -166,10 +174,10 @@ clock = pygame.time.Clock()
 
 state = State(
     fitness_metric=lambda boid: boid.position.x,
-    survival_predicate=lambda boid: boid.position.x >= 64
+    survival_predicate=lambda boid: boid.position.x >= 100
 )
 
-simulation_timer = Timer(0.001)
+simulation_timer = Timer(0.02)
 visual_timer = Timer(0.02)
 
 while True:
