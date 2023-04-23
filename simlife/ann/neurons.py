@@ -207,3 +207,14 @@ class TriangularNeuron:
 
     def determine_output(self):
         return 1 - abs(self.__value)
+
+
+class BinaryNeuron:
+    def feed_input(self, value):
+        self.__value = value
+
+    def determine_output(self):
+        if self.__value <= 0:
+            return 0
+        else:
+            return 1
