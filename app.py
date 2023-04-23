@@ -20,6 +20,16 @@ WHITE = pygame.Color(255, 255, 255)
 RED = pygame.Color(255, 0, 0)
 
 
+class HardcodedPhenotypeBuilder:
+    def build(self, boid, dna):
+        builder = NeuralNetworkBuilder()
+        builder.connect(LatitudeSensor(boid), step := StepNeuron(0.2, 1, 0), 1)
+        builder.connect(step, output1 := HorizontalMovementDecisionNeuron(relative=False), 1)
+        builder.connect(AroundSensor(boid), output2 := VerticalMovementDecisionNeuron(relative=False), 1)
+        neural_network = builder.build()
+        return ArtificialIntelligence(neural_network, [output1, output2])
+
+
 class PhenotypeBuilder:
     def build(self, boid, dna):
         genes = iter(dna)
@@ -27,7 +37,7 @@ class PhenotypeBuilder:
         layers = [
             [
                 ConstantNeuron(1.0),
-                FrontSensor(boid),
+                AroundSensor(boid),
                 # HorizontalOrientationSensor(boid),
                 # VerticalOrientationSensor(boid),
                 LatitudeSensor(boid),
@@ -38,9 +48,9 @@ class PhenotypeBuilder:
                 IdentityNeuron(),
                 IdentityNeuron(),
                 IdentityNeuron(),
-                StepNeuron(next(genes)),
-                StepNeuron(next(genes)),
-                StepNeuron(next(genes)),
+                StepNeuron(next(genes), next(genes), next(genes)),
+                StepNeuron(next(genes), next(genes), next(genes)),
+                StepNeuron(next(genes), next(genes), next(genes)),
                 SigmoidNeuron(),
                 SigmoidNeuron(),
                 SigmoidNeuron(),
@@ -196,7 +206,7 @@ state = State(
     phenotype_builder=PhenotypeBuilder(),
     mutation_rate=1,
     boid_initial_energy=200,
-    auto_steps_per_generation=200,
+    auto_steps_per_generation=100,
 )
 
 simulation_timer = Timer(0.02)
