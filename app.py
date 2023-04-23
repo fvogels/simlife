@@ -6,7 +6,7 @@ from simlife.ann.neuralnetwork import NeuralNetworkBuilder
 from simlife.simulation.ai import ArtificialIntelligence
 from simlife.simulation.world import World
 from simlife.ann.neurons import *
-from simlife.simulation import Simulation, Boid, Wall
+from simlife.simulation import *
 from simlife.util import *
 from simlife.simulation.dna import DNA
 
@@ -71,14 +71,24 @@ class PhenotypeBuilder:
 
 class State:
     def __init__(self, *, fitness_metric, survival_predicate):
+        self.__boid_count = 1000
         self.__fitness_metric = fitness_metric
         self.__survival_predicate = survival_predicate
         self.__phenotype_builder = PhenotypeBuilder()
-        self.__boid_count = 1000
-        self.__simulation = self.__create_simulation(generate_dna=lambda: DNA())
-        self.__runner = self.__create_automatic_runner(100)
         self.__generation = 0
         self.__mutation_rate = 10
+        self.__simulation = self.__create_simulation()
+
+        self.__world = self.__create_world(generate_dna=lambda: DNA())
+        self.__runner = self.__create_automatic_runner(100)
+
+    def __create_world(self, generate_dna):
+        world = World(128, 128)
+        for y in range(20, 108, 2):
+            world.add_entity(Position(64, y), Wall())
+        for _ in range(self.__boid_count):
+            world.add_boid(dna=generate_dna(), phenotype_builder=self.__phenotype_builder)
+        return world
 
     def set_manual(self):
         self.__runner = self.__create_manual_runner()
@@ -86,13 +96,12 @@ class State:
     def set_automatic(self):
         self.__runner = self.__create_automatic_runner(100)
 
-    def __create_simulation(self, *, generate_dna):
-        world = World(128, 128)
-        # for y in range(20, 108, 2):
-        #     world.add_entity(Position(64, y), Wall())
-        for _ in range(self.__boid_count):
-            world.add_boid(dna=generate_dna(), phenotype_builder=self.__phenotype_builder)
-        return Simulation(world)
+    def __create_simulation(self):
+        rules = [
+            AbsoluteMotionRule(),
+        ]
+
+        return Simulation(rules)
 
     def step(self):
         next(self.__runner)
@@ -101,7 +110,7 @@ class State:
         def runner():
             while True:
                 for _ in range(steps_per_generation):
-                    self.__simulation.compute_next()
+                    self.__simulation.compute_next(self.__world)
                     yield None
                 self.next_generation()
         return runner()
@@ -109,7 +118,7 @@ class State:
     def __create_manual_runner(self):
         def runner():
             while True:
-                self.__simulation.compute_next()
+                self.__simulation.compute_next(self.__world)
                 yield None
 
         return runner()
@@ -127,17 +136,17 @@ class State:
             x = random.random() ** 5
             return int(x * len(dnas))
 
-        boids = (cell for cell in self.__simulation.world if isinstance(cell, Boid))
+        boids = (cell for cell in self.__world if isinstance(cell, Boid))
         survivors = sorted((boid for boid in boids if self.__survival_predicate(boid)), key=self.__fitness_metric, reverse=True)
         dnas = [boid.dna for boid in survivors]
         print(f'Survivors in generation {self.__generation}: {len(dnas)}')
         print(f'Winner: energy={survivors[0].energy} dna={survivors[0].dna}')
         self.__generation += 1
-        self.__simulation = self.__create_simulation(generate_dna=generate_dna)
+        self.__world = self.__create_world(generate_dna=generate_dna)
 
     @property
     def world(self):
-        return self.__simulation.world
+        return self.__world
 
 
 def render_world(surface, world):
