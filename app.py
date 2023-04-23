@@ -26,11 +26,11 @@ class PhenotypeBuilder:
             [
                 ConstantNeuron(1.0),
                 FrontSensor(boid),
-                HorizontalOrientationSensor(boid),
-                VerticalOrientationSensor(boid),
+                # HorizontalOrientationSensor(boid),
+                # VerticalOrientationSensor(boid),
                 LatitudeSensor(boid),
                 LongitudeSensor(boid),
-                EnergySensor(boid),
+                # EnergySensor(boid),
             ],
             # [
             #     TriangularNeuron(),
@@ -41,10 +41,10 @@ class PhenotypeBuilder:
             #     SigmoidNeuron(),
             # ],
             [
-                HorizontalMovementDecisionNeuron(),
-                VerticalMovementDecisionNeuron(),
-                RotationDecisionNeuron(),
-                FightDecisionNeuron(),
+                HorizontalMovementDecisionNeuron(relative=False),
+                VerticalMovementDecisionNeuron(relative=False),
+                # RotationDecisionNeuron(),
+                # FightDecisionNeuron(),
             ]
         ]
         builder = NeuralNetworkBuilder()
@@ -154,19 +154,21 @@ pygame.init()
 display_surface = pygame.display.set_mode(WINDOW_SIZE)
 clock = pygame.time.Clock()
 
-state = State(
-    fitness_metric=lambda boid: boid.energy,
-    survival_predicate=lambda boid: True
-)
+# state = State(
+#     fitness_metric=lambda boid: boid.energy,
+#     survival_predicate=lambda boid: True
+# )
 
 # state = State(
 #     fitness_metric=lambda boid: max(boid.position.x, 127-boid.position.x),
 #     survival_predicate=lambda boid: boid.position.x > 117 or boid.position.x < 10
 # )
-# state = State(
-#     fitness_metric=lambda boid: -boid.position.distance_to(Position(64, 64)),
-#     survival_predicate=lambda boid: 64 - 8 < boid.position.x < 64 + 8 and 64 - 8 < boid.position.y < 64 + 8
-# )
+
+state = State(
+    fitness_metric=lambda boid: boid.position.x,
+    survival_predicate=lambda boid: boid.position.x >= 64
+)
+
 simulation_timer = Timer(0.001)
 visual_timer = Timer(0.02)
 

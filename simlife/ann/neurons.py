@@ -117,36 +117,42 @@ class ClassifierNeuron:
 
 
 class HorizontalMovementDecisionNeuron:
-    def __init__(self):
+    def __init__(self, relative=True):
         self.__inner = ClassifierNeuron(
             negative_value=WEST.to_direction(),
             zero_value=Direction(0, 0),
             positive_value=EAST.to_direction(),
         )
+        self.__decision_property = 'relative_motion'if relative else 'absolute_motion'
 
     def feed_input(self, value):
         self.__inner.feed_input(value)
 
     def determine_output(self):
         def update_decision(decision):
-            decision.movement_direction += self.__inner.determine_output()
+            old_value = getattr(decision, self.__decision_property)
+            new_value = old_value + self.__inner.determine_output()
+            setattr(decision, self.__decision_property, new_value)
         return update_decision
 
 
 class VerticalMovementDecisionNeuron:
-    def __init__(self):
+    def __init__(self, relative=True):
         self.__inner = ClassifierNeuron(
             negative_value=NORTH.to_direction(),
             zero_value=Direction(0, 0),
             positive_value=SOUTH.to_direction(),
         )
+        self.__decision_property = 'relative_motion'if relative else 'absolute_motion'
 
     def feed_input(self, value):
         self.__inner.feed_input(value)
 
     def determine_output(self):
         def update_decision(decision):
-            decision.movement_direction += self.__inner.determine_output()
+            old_value = getattr(decision, self.__decision_property)
+            new_value = old_value + self.__inner.determine_output()
+            setattr(decision, self.__decision_property, new_value)
         return update_decision
 
 

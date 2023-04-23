@@ -19,6 +19,7 @@ class ArtificialIntelligence:
 
 class Decision:
     def __init__(self):
-        self.movement_direction = Direction(0, 0)
+        self.relative_motion = Direction(0, 0)
+        self.absolute_motion = Direction(0, 0)
         self.rotation = NORTH
         self.fight = False
