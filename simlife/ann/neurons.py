@@ -94,6 +94,14 @@ class EnergySensor:
         return math.atan(self.__boid.energy - 50)
 
 
+class PheromoneSensor:
+    def __init__(self, boid):
+        self.__boid = boid
+
+    def determine_output(self):
+        return self.__boid.world.pheromones_at(self.__boid.position)
+
+
 class SignNeuron:
     def __init__(self, threshold=0.1):
         self.__threshold = threshold
@@ -196,6 +204,19 @@ class FightDecisionNeuron:
     def determine_output(self):
         def update_decision(decision):
             decision.fight = self.__inner.determine_output()
+        return update_decision
+
+
+class ReleasePheromonesDecisionNeuron:
+    def __init__(self):
+        self.__inner = StepNeuron(x=0, y1=False, y2=True)
+
+    def feed_input(self, value):
+        self.__inner.feed_input(value)
+
+    def determine_output(self):
+        def update_decision(decision):
+            decision.release_pheromones = self.__inner.determine_output()
         return update_decision
 
 

@@ -7,6 +7,7 @@ class Simulation:
 
     def compute_next(self, world):
         # Strict evaluation is important here, otherwise boids will be added as they are processed
+        world.spread_pheromones()
         boids = [entity for entity in world.entities if isinstance(entity, Boid)]
 
         for boid in boids:
@@ -98,3 +99,13 @@ class DeathRule:
     def apply(self, boid, decision):
         if boid.energy <= 0:
             boid.world.remove_entity(boid.position)
+
+
+class PheromoneRule:
+    def __init__(self, energy_cost):
+        self.__energy_cost = energy_cost
+
+    def apply(self, boid, decision):
+        if decision.release_pheromones:
+            boid.world.update_pheromones(boid.position, 0.1)
+            boid.energy -= self.__energy_cost

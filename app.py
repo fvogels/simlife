@@ -42,6 +42,7 @@ class PhenotypeBuilder:
                 LatitudeSensor(boid),
                 # LongitudeSensor(boid),
                 EnergySensor(boid),
+                PheromoneSensor(boid),
             ],
             [
                 IdentityNeuron(),
@@ -67,6 +68,7 @@ class PhenotypeBuilder:
             [
                 HorizontalMovementDecisionNeuron(relative=False),
                 VerticalMovementDecisionNeuron(relative=False),
+                ReleasePheromonesDecisionNeuron(),
                 # RotationDecisionNeuron(),
                 # FightDecisionNeuron(),
             ]
@@ -95,7 +97,10 @@ def render_world(surface, world):
             elif isinstance(entity, Wall):
                 color = BLACK
             else:
-                color = WHITE
+                pheromones = world.pheromones_at(position)
+                c = int(min(1, max(0, pheromones)) * 255)
+                assert 0 <= c <= 255
+                color = pygame.Color(255 - c, 255, 255 - c)
             pygame.draw.rect(surface, color, rectangle)
 
 
@@ -135,6 +140,7 @@ state = State(
     simulation_rules=[
         AbsoluteMotionRule(),
         DeathRule(),
+        PheromoneRule(energy_cost=1),
     ],
 )
 

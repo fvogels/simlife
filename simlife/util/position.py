@@ -26,3 +26,12 @@ class Position:
         dx = self.x - other.x
         dy = self.y - other.y
         return (dx ** 2 + dy ** 2) ** 0.5
+
+    @property
+    def around(self):
+        x = self.x
+        y = self.y
+        yield Position(x - 1, y)
+        yield Position(x, y - 1)
+        yield Position(x + 1, y)
+        yield Position(x, y + 1)

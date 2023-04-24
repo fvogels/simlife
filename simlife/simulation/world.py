@@ -28,6 +28,29 @@ class World:
     def entity_at(self, position):
         return self.__grid[position].entity
 
+    def pheromones_at(self, position):
+        return self.__grid[position].pheromones
+
+    def update_pheromones(self, position, quantity):
+        cell = self.__grid[position]
+        cell.pheromones = max(0, cell.pheromones + quantity)
+
+    def __around(self, position):
+        return (p for p in position.around if self.is_valid_position(p))
+
+    def spread_pheromones(self):
+        new_values = Grid(self.width, self.height, lambda position: 0)
+        for position in self.__grid.positions:
+            cell = self.__grid[position]
+            if cell.pheromones > 0:
+                neighbors = list(self.__around(position))
+                amount = cell.pheromones / len(neighbors)
+                for neighbor in neighbors:
+                    new_values[neighbor] += amount
+        for position in self.__grid.positions:
+            cell = self.__grid[position]
+            cell.pheromones = new_values[position]
+
     def add_boid(self, *, dna, phenotype_builder, position=None, orientation=None, energy=None):
         position = position or self.__create_random_unused_position()
         orientation = orientation or self.__create_random_orientation()
@@ -48,7 +71,7 @@ class World:
         entity.position = destination
 
     def remove_entity(self, position):
-        self[position].entity = None
+        self.__grid[position].entity = None
 
     def is_valid_position(self, position):
         return self.__grid.is_valid_position(position)
@@ -76,4 +99,4 @@ class World:
 class Cell:
     def __init__(self):
         self.entity = None
-        self.pheromone = 0
+        self.pheromones = 0

@@ -20,6 +20,10 @@ class Grid:
     def height(self):
         return len(self.__contents)
 
+    @property
+    def positions(self):
+        return (Position(x, y) for y in range(self.height) for x in range(self.width))
+
     def __getitem__(self, position):
         assert self.is_valid_position(position), f'{position} is invalid'
         return self.__contents[position.y][position.x]

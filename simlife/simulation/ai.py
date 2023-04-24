@@ -23,3 +23,4 @@ class Decision:
         self.absolute_motion = Direction(0, 0)
         self.rotation = NORTH
         self.fight = False
+        self.release_pheromones = False
