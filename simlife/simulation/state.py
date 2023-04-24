@@ -69,7 +69,7 @@ class State:
             x = random.random() ** 5
             return int(x * len(dnas))
 
-        boids = (cell for cell in self.__world if isinstance(cell, Boid))
+        boids = (entity for entity in self.__world.entities if isinstance(entity, Boid))
         survivors = sorted((boid for boid in boids if self.__survival_predicate(boid)), key=self.__fitness_metric, reverse=True)
         dnas = [boid.dna for boid in survivors]
         print(f'Survivors in generation {self.__generation}: {len(dnas)}')

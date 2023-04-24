@@ -19,7 +19,8 @@ class FrontSensor:
         boid = self.__boid
         world = boid.world
         position_in_front_of_boid = boid.position + boid.orientation.to_direction()
-        if (not world.is_valid_position(position_in_front_of_boid)) or world[position_in_front_of_boid] is not None:
+        entities = world.entities
+        if not entities.is_empty(position_in_front_of_boid):
             return 1
         else:
             return 0
@@ -34,7 +35,7 @@ class AroundSensor:
         world = boid.world
         for orientation in [NORTH, EAST, SOUTH, WEST]:
             neighboring_position = boid.position + orientation.to_direction()
-            if (not world.is_valid_position(neighboring_position)) or world[neighboring_position] is not None:
+            if not world.is_empty(neighboring_position):
                 return 1
         return 0
 

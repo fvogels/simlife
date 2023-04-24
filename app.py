@@ -50,9 +50,9 @@ class PhenotypeBuilder:
                 StepNeuron(next(genes), next(genes), next(genes)),
                 StepNeuron(next(genes), next(genes), next(genes)),
                 StepNeuron(next(genes), next(genes), next(genes)),
-                SigmoidNeuron(),
-                SigmoidNeuron(),
-                SigmoidNeuron(),
+                StepNeuron(next(genes), next(genes), next(genes)),
+                StepNeuron(next(genes), next(genes), next(genes)),
+                StepNeuron(next(genes), next(genes), next(genes)),
             ],
             # [
             #     StepNeuron(next(genes)),
@@ -84,18 +84,15 @@ class PhenotypeBuilder:
         return artificial_intelligence
 
 
-
-
-
 def render_world(surface, world):
     for y in range(world.height):
         for x in range(world.width):
             position = Position(x, y)
-            cell = world[position]
+            entity = world.entity_at(position)
             rectangle = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-            if isinstance(cell, Boid):
+            if isinstance(entity, Boid):
                 color = RED
-            elif isinstance(cell, Wall):
+            elif isinstance(entity, Wall):
                 color = BLACK
             else:
                 color = WHITE
@@ -119,12 +116,21 @@ clock = pygame.time.Clock()
 #     survival_predicate=lambda boid: boid.position.x > 117 or boid.position.x < 10
 # )
 
+
+def fitness_metric(boid):
+    return boid.position.x
+
+
+def survival_predicate(boid):
+    return boid.position.x >= 100
+
+
 state = State(
-    fitness_metric=lambda boid: boid.position.x,
-    survival_predicate=lambda boid: boid.position.x >= 100,
+    fitness_metric=fitness_metric,
+    survival_predicate=survival_predicate ,
     phenotype_builder=PhenotypeBuilder(),
     mutation_rate=1,
-    boid_initial_energy=200,
+    boid_initial_energy=100,
     auto_steps_per_generation=100,
     simulation_rules=[
         AbsoluteMotionRule(),

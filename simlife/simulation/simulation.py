@@ -7,7 +7,7 @@ class Simulation:
 
     def compute_next(self, world):
         # Strict evaluation is important here, otherwise boids will be added as they are processed
-        boids = [cell for cell in world if isinstance(cell, Boid)]
+        boids = [entity for entity in world.entities if isinstance(entity, Boid)]
 
         for boid in boids:
             for rule in self.__rules:
@@ -19,7 +19,7 @@ class Simulation:
             boid.energy -= 1
             enemy_position = boid.position + boid.orientation.to_direction()
             if self.__world.is_valid_position(enemy_position):
-                other_boid = self.__world[enemy_position]
+                other_boid = self.entity_at[enemy_position]
                 if isinstance(other_boid, Boid):
                     if boid.energy >= other_boid.energy:
                         winner = boid
@@ -66,7 +66,7 @@ class RelativeMotionRule:
                 boid.energy -= energy_consumed
                 old_position = boid.position
                 new_position = old_position + movement
-                if world.is_valid_position(new_position) and world[new_position] is None:
+                if world.is_empty(new_position):
                     world.move_entity(old_position, new_position)
 
 
@@ -83,7 +83,7 @@ class AbsoluteMotionRule:
                 boid.energy -= energy_consumed
                 old_position = boid.position
                 new_position = old_position + movement
-                if world.is_valid_position(new_position) and world[new_position] is None:
+                if world.is_empty(new_position):
                     world.move_entity(old_position, new_position)
 
 
